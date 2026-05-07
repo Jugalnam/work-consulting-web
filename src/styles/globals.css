@@ -1,0 +1,48 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import "tailwindcss";
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Pretendard,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    "Noto Sans",
+    "Apple Color Emoji",
+    "Segoe UI Emoji";
+  color: #0a0a0a;
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(99, 102, 241, 0.18), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, rgba(236, 72, 153, 0.16), transparent 60%),
+    radial-gradient(900px 500px at 60% 90%, rgba(34, 211, 238, 0.12), transparent 60%),
+    #ffffff;
+}
+
+/* lightweight motion helpers (no extra deps) */
+@keyframes wizard-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.wizard-enter {
+  animation: wizard-fade-up 260ms ease-out both;
+}
+
+

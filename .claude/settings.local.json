@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"C:\\\\Users\\\\User\\\\Desktop\\\\Claude\\\\Company Consulting Webpage\\\\web\" status)",
+      "Bash(gh --version)",
+      "Bash(gh auth *)",
+      "PowerShell(gh --version 2>&1)",
+      "PowerShell(vercel --version 2>&1)"
+    ]
+  }
+}
