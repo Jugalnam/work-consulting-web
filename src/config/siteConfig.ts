@@ -21,7 +21,7 @@ export const siteConfig = {
   routing: 'multi' as 'single' | 'multi',
 
   // ── Google Analytics ──
-  gaId: null as string | null,
+  gaId: 'G-QWPNCMN2DR' as string | null,
 
   // ── Google Search Console ──
   gscVerification: null as string | null,
