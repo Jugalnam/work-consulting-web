@@ -184,6 +184,7 @@ export function Home() {
   const [showInquiry, setShowInquiry] = useState(false)
   const [inquiryValues, setInquiryValues] = useState<InquiryFormState>(initialState)
   const [inquirySubmitted, setInquirySubmitted] = useState(false)
+  const [isInquiryLoading, setIsInquiryLoading] = useState(false)
   const [inquiryErrors, setInquiryErrors] = useState<
     Partial<Record<keyof InquiryFormState, string>>
   >({})
@@ -296,6 +297,7 @@ export function Home() {
 
     setShowInquiry(false)
     setInquirySubmitted(false)
+    setIsInquiryLoading(false)
     setInquiryErrors({})
     setInquiryValues(initialState)
   }
@@ -336,15 +338,42 @@ export function Home() {
     setInquiryValues((prev) => ({ ...prev, [key]: next }))
   }
 
-  function onInquirySubmit(e: FormEvent) {
+  async function onInquirySubmit(e: FormEvent) {
     e.preventDefault()
     const nextErrors = validate(inquiryValues)
     setInquiryErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
-    // 전송은 추후(Tier 3)에서 연결합니다.
-    console.log('[Inquiry]', inquiryValues)
-    setInquirySubmitted(true)
+    setIsInquiryLoading(true)
+    try {
+      if (import.meta.env.DEV) {
+        await new Promise((r) => window.setTimeout(r, 800))
+        setInquirySubmitted(true)
+        return
+      }
+
+      const res = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: inquiryValues.name,
+          contact: inquiryValues.contact,
+          topic: inquiryValues.topic,
+          message: inquiryValues.message,
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({})) as { error?: string }
+        throw new Error(data.error ?? '전송에 실패했습니다.')
+      }
+
+      setInquirySubmitted(true)
+    } catch (err) {
+      setInquiryErrors({ message: err instanceof Error ? err.message : '전송에 실패했습니다.' })
+    } finally {
+      setIsInquiryLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -914,7 +943,7 @@ export function Home() {
                 </div>
               ) : null}
 
-              <form className="mt-6 grid gap-4" onSubmit={onInquirySubmit}>
+              <form className="mt-6 grid gap-4" onSubmit={(e) => { void onInquirySubmit(e) }}>
                 <div className="grid gap-2">
                   <label className="text-sm font-medium" htmlFor="name">
                     이름
@@ -983,7 +1012,12 @@ export function Home() {
                       checked={inquiryValues.consent}
                       onChange={(e) => onInquiryChange('consent', e.target.checked)}
                     />
-                    <span>문의 처리를 위해 개인정보(이름, 연락처, 문의 내용) 수집·이용에 동의합니다.</span>
+                    <span>
+                      문의 처리를 위해 개인정보(이름, 연락처, 문의 내용) 수집·이용에 동의합니다.{' '}
+                      <a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-indigo-600">
+                        개인정보처리방침
+                      </a>
+                    </span>
                   </label>
                   {inquiryErrors.consent ? <p className="text-sm text-red-600">{inquiryErrors.consent}</p> : null}
                 </div>
@@ -991,9 +1025,10 @@ export function Home() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="submit"
-                    className="rounded-xl bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(79,70,229,0.8)]"
+                    disabled={isInquiryLoading}
+                    className="rounded-xl bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(79,70,229,0.8)] disabled:opacity-50"
                   >
-                    문의 접수
+                    {isInquiryLoading ? '전송 중…' : '문의 접수'}
                   </button>
                   <button
                     type="button"

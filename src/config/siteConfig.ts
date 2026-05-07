@@ -18,7 +18,7 @@ export const siteConfig = {
   ],
 
   // ── 라우팅 ──
-  routing: 'single' as 'single' | 'multi',
+  routing: 'multi' as 'single' | 'multi',
 
   // ── Google Analytics ──
   gaId: null as string | null,
