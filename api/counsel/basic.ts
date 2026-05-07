@@ -60,32 +60,34 @@ export default async function handler(req: Req, res: Res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   const { topic, tone, message } = req.body
-  const apiKey = process.env.ANTHROPIC_API_KEY
+  const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) return res.status(500).json({ error: 'Server configuration error' })
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const model = 'gemini-2.5-flash'
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
+
+  const response = await fetch(url, {
     method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
+    headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: buildUserPrompt(topic, tone, message) }],
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: [
+        { role: 'user', parts: [{ text: buildUserPrompt(topic, tone, message) }] },
+      ],
+      generationConfig: { maxOutputTokens: 1024, temperature: 0.8 },
     }),
   })
 
   if (!response.ok) {
     const text = await response.text().catch(() => '')
-    console.error('[counsel/basic] Anthropic error:', text)
+    console.error('[counsel/basic] Gemini error:', text)
     return res.status(500).json({ error: '상담 요청에 실패했습니다.' })
   }
 
-  const data = await response.json() as { content: Array<{ type: string; text: string }> }
-  const answer = data.content.find((c) => c.type === 'text')?.text ?? ''
+  const data = (await response.json()) as {
+    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>
+  }
+  const answer = data.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
 
   return res.status(200).json({ mode: 'basic', topic, tone, answer })
 }
