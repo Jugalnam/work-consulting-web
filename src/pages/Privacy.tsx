@@ -1,7 +1,7 @@
 import { SEOHead } from '../components/SEOHead'
 import { siteConfig } from '../config/siteConfig'
 
-const EFFECTIVE_DATE = '2025년 5월 7일'
+const EFFECTIVE_DATE = '2026년 5월 7일'
 const CONTACT_EMAIL = 'fortin2004@gmail.com'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -90,7 +90,7 @@ export function Privacy() {
                   <td className="px-4 py-2">서버 호스팅 및 서비스 운영</td>
                 </tr>
                 <tr className="border-t">
-                  <td className="px-4 py-2">Resend Inc.</td>
+                  <td className="px-4 py-2">Google LLC (Gmail)</td>
                   <td className="px-4 py-2">이메일 발송</td>
                 </tr>
                 <tr className="border-t">

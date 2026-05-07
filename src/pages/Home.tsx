@@ -1058,8 +1058,12 @@ export function Home() {
             </section>
           ) : null}
 
-          <footer className="pt-4 text-center text-xs text-neutral-500">
-            © {new Date().getFullYear()} {siteConfig.siteName}
+          <footer className="pt-4 text-center text-xs text-neutral-500 space-y-2">
+            <div className="flex justify-center gap-4">
+              <a href="/terms" className="underline underline-offset-2 hover:text-neutral-700">이용약관</a>
+              <a href="/privacy" className="underline underline-offset-2 hover:text-neutral-700">개인정보처리방침</a>
+            </div>
+            <div>© {new Date().getFullYear()} {siteConfig.siteName}</div>
           </footer>
         </div>
       </div>
