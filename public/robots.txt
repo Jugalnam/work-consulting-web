@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://example.vercel.app/sitemap.xml
+Sitemap: https://work-consulting-web.vercel.app/sitemap.xml
 
