@@ -77,7 +77,11 @@ export default async function handler(req: Req, res: Res) {
       contents: [
         { role: 'user', parts: [{ text: buildUserPrompt(topic, tone, message) }] },
       ],
-      generationConfig: { maxOutputTokens: 1024, temperature: 0.8 },
+      generationConfig: {
+        maxOutputTokens: 2048,
+        temperature: 0.8,
+        thinkingConfig: { thinkingBudget: 0 },
+      },
     }),
   })
 
