@@ -28,8 +28,8 @@ export const siteConfig = {
 
   // ── 공유 버튼 ──
   share: {
-    kakao: true,
-    twitter: true,
+    kakao: false,
+    twitter: false,
     copyLink: true,
   },
 
