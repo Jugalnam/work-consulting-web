@@ -84,7 +84,7 @@ export default async function handler(req: Req, res: Res) {
   if (!response.ok) {
     const text = await response.text().catch(() => '')
     console.error('[counsel/basic] Gemini error:', text)
-    return res.status(500).json({ error: '상담 요청에 실패했습니다.' })
+    return res.status(500).json({ error: `Gemini error ${response.status}: ${text}` })
   }
 
   const data = (await response.json()) as {
