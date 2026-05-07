@@ -70,7 +70,7 @@ export default async function handler(req: Req, res: Res) {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) return res.status(500).json({ error: 'Server configuration error' })
 
-  const model = 'gemini-2.5-pro'
+  const model = 'gemini-2.5-flash'
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
 
   const response = await fetch(url, {
