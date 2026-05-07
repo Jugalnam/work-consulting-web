@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { SEOHead } from '../components/SEOHead'
 import { ResultShareCard } from '../components/ResultShareCard'
 import { ShareButtons } from '../components/ShareButtons'
+import { MarkdownAnswer } from '../components/MarkdownAnswer'
 import { siteConfig } from '../config/siteConfig'
 import { trackEvent } from '../components/AnalyticsProvider'
 
@@ -490,7 +491,7 @@ export function Home() {
                 처음부터 다시하기
               </button>
               <span className="text-xs text-neutral-600">{progress}%</span>
-              <div className="h-2 w-44 overflow-hidden rounded-full bg-neutral-100">
+              <div className="h-2 w-20 overflow-hidden rounded-full bg-neutral-100 sm:w-44">
                 <div
                   className="h-full bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-cyan-500 transition-[width] duration-300"
                   style={{ width: `${progress}%` }}
@@ -503,7 +504,7 @@ export function Home() {
         <div className="mt-8 space-y-6">
           {step === 1 ? (
             <CardShell title="화면 1 · 직장생활 중 고민을 골라주세요" description="가장 가까운 주제 하나를 선택하세요.">
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-3">
                 {topics.map((t) => (
                   <button
                     key={t}
@@ -538,7 +539,7 @@ export function Home() {
 
           {step === 2 ? (
             <CardShell title="화면 2 · 원하는 톤을 골라주세요" description="답변이 나오는 말투/느낌이 달라집니다.">
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-2 gap-3">
                 {tones.map((t) => (
                   <button
                     key={t}
@@ -676,9 +677,13 @@ export function Home() {
 
                 <div className="rounded-2xl border bg-neutral-50 p-5">
                   <p className="text-xs font-semibold text-neutral-600">상담 내용(상세)</p>
-                  <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-neutral-900">
-                    {basicCounsel?.answer ?? '결과를 불러오지 못했습니다.'}
-                  </p>
+                  <div className="mt-3 text-[15px] leading-[1.75] text-neutral-800">
+                    {basicCounsel?.answer ? (
+                      <MarkdownAnswer>{basicCounsel.answer}</MarkdownAnswer>
+                    ) : (
+                      <p>결과를 불러오지 못했습니다.</p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="rounded-2xl border p-5">
@@ -699,13 +704,17 @@ export function Home() {
                           <div key={idx} className={m.role === 'user' ? 'flex justify-end' : 'flex justify-start'}>
                             <div
                               className={classNames(
-                                'max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed',
+                                'max-w-[85%] rounded-2xl px-4 py-3 text-[15px] leading-[1.75]',
                                 m.role === 'user'
-                                  ? 'bg-black text-white'
-                                  : 'bg-neutral-100 text-neutral-900',
+                                  ? 'whitespace-pre-wrap bg-black text-white'
+                                  : 'bg-neutral-100 text-neutral-800',
                               )}
                             >
-                              {m.content}
+                              {m.role === 'assistant' ? (
+                                <MarkdownAnswer>{m.content}</MarkdownAnswer>
+                              ) : (
+                                m.content
+                              )}
                             </div>
                           </div>
                         ))
@@ -828,9 +837,13 @@ export function Home() {
                         주제 <span className="font-semibold text-neutral-900">{topic}</span> · 톤{' '}
                         <span className="font-semibold text-neutral-900">{tone}</span>
                       </p>
-                      <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-neutral-900">
-                        {deepCounsel?.answer ?? '심층 상담 결과가 아직 없습니다.'}
-                      </p>
+                      <div className="mt-4 text-[15px] leading-[1.75] text-neutral-800">
+                        {deepCounsel?.answer ? (
+                          <MarkdownAnswer>{deepCounsel.answer}</MarkdownAnswer>
+                        ) : (
+                          <p>심층 상담 결과가 아직 없습니다.</p>
+                        )}
+                      </div>
                     </div>
 
                     <div className="rounded-2xl border bg-white/60 p-5 backdrop-blur">
@@ -860,13 +873,17 @@ export function Home() {
                               <div key={idx} className={m.role === 'user' ? 'flex justify-end' : 'flex justify-start'}>
                                 <div
                                   className={classNames(
-                                    'max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed',
+                                    'max-w-[85%] rounded-2xl px-4 py-3 text-[15px] leading-[1.75]',
                                     m.role === 'user'
-                                      ? 'bg-black text-white'
-                                      : 'bg-neutral-100 text-neutral-900',
+                                      ? 'whitespace-pre-wrap bg-black text-white'
+                                      : 'bg-neutral-100 text-neutral-800',
                                   )}
                                 >
-                                  {m.content}
+                                  {m.role === 'assistant' ? (
+                                    <MarkdownAnswer>{m.content}</MarkdownAnswer>
+                                  ) : (
+                                    m.content
+                                  )}
                                 </div>
                               </div>
                             ))
