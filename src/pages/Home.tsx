@@ -4,6 +4,7 @@ import { SEOHead } from '../components/SEOHead'
 import { ResultShareCard } from '../components/ResultShareCard'
 import { ShareButtons } from '../components/ShareButtons'
 import { siteConfig } from '../config/siteConfig'
+import { trackEvent } from '../components/AnalyticsProvider'
 
 type Tone = '냉정하게' | '따뜻하게' | '엄마처럼' | '아빠처럼' | '코치처럼' | '친구처럼'
 
@@ -202,6 +203,7 @@ export function Home() {
   )
 
   async function runBasicCounsel() {
+    trackEvent('counsel_start', 'counseling', 'basic')
     setCounselError(null)
     setBasicCounsel(null)
     setIsCounselLoading(true)
@@ -214,6 +216,7 @@ export function Home() {
         { role: 'assistant', content: data.answer },
       ])
       setBasicFollowUp('')
+      trackEvent('counsel_complete', 'counseling', 'basic')
       setStep(5)
     } catch (e) {
       setCounselError(e instanceof Error ? e.message : '요청에 실패했습니다.')
@@ -227,7 +230,7 @@ export function Home() {
     const text = basicFollowUp.trim()
     if (!text) return
 
-    // Keep chat-like experience in step 5
+    trackEvent('followup_send', 'counseling', 'basic')
     setCounselError(null)
     setIsBasicChatLoading(true)
 
@@ -257,6 +260,7 @@ export function Home() {
   }
 
   async function runDeepCounsel() {
+    trackEvent('counsel_start', 'counseling', 'deep')
     setCounselError(null)
     setDeepCounsel(null)
     setIsCounselLoading(true)
@@ -269,6 +273,7 @@ export function Home() {
         { role: 'assistant', content: data.answer },
       ])
       setDeepFollowUp('')
+      trackEvent('counsel_complete', 'counseling', 'deep')
     } catch (e) {
       setCounselError(e instanceof Error ? e.message : '요청에 실패했습니다.')
     } finally {
@@ -306,6 +311,7 @@ export function Home() {
     const text = deepFollowUp.trim()
     if (!text) return
 
+    trackEvent('followup_send', 'counseling', 'deep')
     setCounselError(null)
     setIsDeepChatLoading(true)
 
@@ -368,6 +374,7 @@ export function Home() {
         throw new Error(data.error ?? '전송에 실패했습니다.')
       }
 
+      trackEvent('inquiry_submit', 'inquiry', inquiryValues.topic)
       setInquirySubmitted(true)
     } catch (err) {
       setInquiryErrors({ message: err instanceof Error ? err.message : '전송에 실패했습니다.' })
@@ -502,6 +509,7 @@ export function Home() {
                     key={t}
                     type="button"
                     onClick={() => {
+                      trackEvent('select_topic', 'counseling', t)
                       setTopic(t)
                       setStep(2)
                     }}
@@ -536,6 +544,7 @@ export function Home() {
                     key={t}
                     type="button"
                     onClick={() => {
+                      trackEvent('select_tone', 'counseling', t)
                       setTone(t)
                       setStep(3)
                     }}
@@ -770,6 +779,7 @@ export function Home() {
                     type="button"
                     className="rounded-xl border bg-white/60 px-4 py-2 text-sm backdrop-blur hover:bg-white/80"
                     onClick={() => {
+                      trackEvent('inquiry_open', 'inquiry', topic)
                       setShowInquiry(true)
                       setInquiryValues((prev) => ({
                         ...prev,
@@ -913,6 +923,7 @@ export function Home() {
                         type="button"
                         className="rounded-xl border bg-white/60 px-4 py-2 text-sm backdrop-blur hover:bg-white/80"
                         onClick={() => {
+                          trackEvent('inquiry_open', 'inquiry', topic)
                           setShowInquiry(true)
                           setInquiryValues((prev) => ({ ...prev, topic, message }))
                           window.setTimeout(() => {
