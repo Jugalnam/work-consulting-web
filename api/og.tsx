@@ -1,4 +1,4 @@
-/** @jsxImportSource react */
+import React from 'react'
 import { ImageResponse } from '@vercel/og'
 
 export const config = { runtime: 'edge' }
