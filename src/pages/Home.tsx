@@ -950,7 +950,7 @@ export function Home() {
 
               {inquirySubmitted ? (
                 <div className="mt-4 rounded-xl bg-green-50 p-4 text-sm text-green-900">
-                  접수가 완료되었습니다. (현재는 전송 연결 전 단계입니다.)
+                  접수가 완료되었습니다. 빠른 시일 내에 연락드리겠습니다.
                 </div>
               ) : null}
 
