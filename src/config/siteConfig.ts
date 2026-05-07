@@ -3,8 +3,8 @@ export const siteConfig = {
   siteName: '직장 고민 상담',
   siteDescription:
     '직장 내 관계, 번아웃, 이직·승진 고민 등 직장생활의 고충을 함께 정리하는 1:1 상담입니다.',
-  siteUrl: 'https://example.vercel.app',
-  ogImage: '/og-image.png',
+  siteUrl: 'https://work-consulting-web.vercel.app',
+  ogImage: '/og-image.svg',
   author: '직장 고민 상담',
   blogUrl: '',
   locale: 'ko_KR',

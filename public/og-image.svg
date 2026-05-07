@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#eef2ff"/>
+      <stop offset="50%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#ecfeff"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4f46e5"/>
+      <stop offset="50%" style="stop-color:#a855f7"/>
+      <stop offset="100%" style="stop-color:#06b6d4"/>
+    </linearGradient>
+    <filter id="blur1">
+      <feGaussianBlur stdDeviation="60"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative blobs -->
+  <circle cx="100" cy="100" r="280" fill="#c7d2fe" opacity="0.35" filter="url(#blur1)"/>
+  <circle cx="1100" cy="200" r="240" fill="#f5d0fe" opacity="0.3" filter="url(#blur1)"/>
+  <circle cx="700" cy="580" r="220" fill="#a5f3fc" opacity="0.25" filter="url(#blur1)"/>
+
+  <!-- Card -->
+  <rect x="80" y="80" width="1040" height="470" rx="32" fill="white" opacity="0.75"/>
+
+  <!-- Accent bar -->
+  <rect x="80" y="80" width="1040" height="6" rx="3" fill="url(#accent)"/>
+
+  <!-- Tag -->
+  <rect x="120" y="140" width="180" height="32" rx="16" fill="#f5f3ff"/>
+  <text x="210" y="162" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="#6d28d9" text-anchor="middle">직장인 1:1 상담</text>
+
+  <!-- Main title -->
+  <text x="120" y="260" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="700" fill="#0a0a0a" letter-spacing="-1">직장 고민 상담</text>
+
+  <!-- Subtitle -->
+  <text x="120" y="320" font-family="system-ui, -apple-system, sans-serif" font-size="26" fill="#525252">직장 내 관계, 번아웃, 이직·승진 고민을</text>
+  <text x="120" y="358" font-family="system-ui, -apple-system, sans-serif" font-size="26" fill="#525252">함께 정리하는 1:1 상담입니다.</text>
+
+  <!-- Pills -->
+  <rect x="120" y="400" width="148" height="40" rx="20" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1.5"/>
+  <text x="194" y="425" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#0369a1" text-anchor="middle">번아웃</text>
+
+  <rect x="282" y="400" width="148" height="40" rx="20" fill="#fdf4ff" stroke="#e9d5ff" stroke-width="1.5"/>
+  <text x="356" y="425" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#7e22ce" text-anchor="middle">직장 내 관계</text>
+
+  <rect x="444" y="400" width="148" height="40" rx="20" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+  <text x="518" y="425" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#c2410c" text-anchor="middle">이직·커리어</text>
+
+  <rect x="606" y="400" width="148" height="40" rx="20" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+  <text x="680" y="425" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="#15803d" text-anchor="middle">업무 스트레스</text>
+
+  <!-- URL -->
+  <text x="120" y="505" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#a3a3a3">work-consulting-web.vercel.app</text>
+</svg>
