@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { siteConfig } from '../config/siteConfig'
 
-type Tone = '냉정하게' | '따뜻하게' | '엄마처럼' | '아빠처럼' | '코치처럼' | '친구처럼'
+type Tone = '냉정하게(팩폭)' | '엄마처럼(따뜻)' | '친구처럼(친근)' | '선배처럼(방어적으로)'
 
 type Metric = {
   label: string
@@ -24,19 +24,15 @@ function hash01(input: string) {
 
 function toneHeadline(tone: Tone) {
   switch (tone) {
-    case '냉정하게':
+    case '냉정하게(팩폭)':
       return '핵심만 말할게요: “다음 행동 1개”부터 잡아요.'
-    case '엄마처럼':
+    case '엄마처럼(따뜻)':
       return '오늘은 충분히 잘했어요. 이제, 나를 먼저 돌봐요.'
-    case '아빠처럼':
-      return '방향만 잡으면 돼요. 지킬 것 1개, 버릴 것 1개.'
-    case '코치처럼':
-      return '이번 주 실험 1개만 하면, 답이 보입니다.'
-    case '친구처럼':
+    case '친구처럼(친근)':
       return '너 진짜 많이 참았다. 이제 한 문장만 말해보자.'
-    case '따뜻하게':
+    case '선배처럼(방어적으로)':
     default:
-      return '괜찮아요. 지금은 “버티기”보다 “정리”가 먼저예요.'
+      return '말은 짧게, 기록은 분명하게. 나를 지키는 쪽으로 가요.'
   }
 }
 
