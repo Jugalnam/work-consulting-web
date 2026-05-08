@@ -49,6 +49,61 @@ type CounselResponse = {
   answer: string
 }
 
+type UsageType = 'basic' | 'deep'
+
+type DailyUsage = {
+  date: string
+  basic: number
+  deep: number
+}
+
+const DAILY_LIMITS: Record<UsageType, number> = {
+  basic: 3,
+  deep: 1,
+}
+
+const USAGE_STORAGE_KEY = 'work-consulting-daily-usage'
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+function createEmptyUsage(): DailyUsage {
+  return { date: todayKey(), basic: 0, deep: 0 }
+}
+
+function readDailyUsage(): DailyUsage {
+  if (typeof window === 'undefined') return createEmptyUsage()
+
+  try {
+    const raw = window.localStorage.getItem(USAGE_STORAGE_KEY)
+    if (!raw) return createEmptyUsage()
+
+    const parsed = JSON.parse(raw) as Partial<DailyUsage>
+    if (parsed.date !== todayKey()) return createEmptyUsage()
+
+    return {
+      date: parsed.date,
+      basic: Number(parsed.basic ?? 0),
+      deep: Number(parsed.deep ?? 0),
+    }
+  } catch {
+    return createEmptyUsage()
+  }
+}
+
+function writeDailyUsage(usage: DailyUsage) {
+  window.localStorage.setItem(USAGE_STORAGE_KEY, JSON.stringify(usage))
+}
+
+function getLimitMessage(type: UsageType) {
+  if (type === 'basic') {
+    return `오늘 무료 상담 ${DAILY_LIMITS.basic}회를 모두 사용했어요. 내일 다시 이용해 주세요.`
+  }
+
+  return `오늘 심층 상담 ${DAILY_LIMITS.deep}회를 모두 사용했어요. 내일 다시 이용해 주세요.`
+}
+
 function buildBasicMockAnswer(tone: Tone, topic: string, message: string) {
   const common = `주제: ${topic}\n\n당신의 상황 요약:\n- ${message.trim() || '(입력 없음)'}\n`
 
@@ -166,6 +221,7 @@ export function Home() {
   const [deepCounsel, setDeepCounsel] = useState<CounselResponse | null>(null)
   const [isCounselLoading, setIsCounselLoading] = useState(false)
   const [counselError, setCounselError] = useState<string | null>(null)
+  const [dailyUsage, setDailyUsage] = useState<DailyUsage>(() => createEmptyUsage())
 
   const [basicChat, setBasicChat] = useState<ChatMessage[]>([])
   const [basicFollowUp, setBasicFollowUp] = useState('')
@@ -196,6 +252,15 @@ export function Home() {
   )
 
   async function runBasicCounsel() {
+    const usage = readDailyUsage()
+    if (usage.basic >= DAILY_LIMITS.basic) {
+      setDailyUsage(usage)
+      setCounselError(getLimitMessage('basic'))
+      setStep(3)
+      trackEvent('usage_limit_reached', 'counseling', 'basic')
+      return
+    }
+
     trackEvent('counsel_start', 'counseling', 'basic')
     setCounselError(null)
     setBasicCounsel(null)
@@ -209,6 +274,9 @@ export function Home() {
         { role: 'assistant', content: data.answer },
       ])
       setBasicFollowUp('')
+      const nextUsage = { ...usage, basic: usage.basic + 1 }
+      writeDailyUsage(nextUsage)
+      setDailyUsage(nextUsage)
       trackEvent('counsel_complete', 'counseling', 'basic')
       setStep(5)
     } catch (e) {
@@ -253,6 +321,15 @@ export function Home() {
   }
 
   async function runDeepCounsel() {
+    const usage = readDailyUsage()
+    if (usage.deep >= DAILY_LIMITS.deep) {
+      setDailyUsage(usage)
+      setCounselError(getLimitMessage('deep'))
+      setStep(5)
+      trackEvent('usage_limit_reached', 'counseling', 'deep')
+      return
+    }
+
     trackEvent('counsel_start', 'counseling', 'deep')
     setCounselError(null)
     setDeepCounsel(null)
@@ -266,6 +343,9 @@ export function Home() {
         { role: 'assistant', content: data.answer },
       ])
       setDeepFollowUp('')
+      const nextUsage = { ...usage, deep: usage.deep + 1 }
+      writeDailyUsage(nextUsage)
+      setDailyUsage(nextUsage)
       trackEvent('counsel_complete', 'counseling', 'deep')
     } catch (e) {
       setCounselError(e instanceof Error ? e.message : '요청에 실패했습니다.')
@@ -284,6 +364,7 @@ export function Home() {
     setDeepCounsel(null)
     setCounselError(null)
     setIsCounselLoading(false)
+    setDailyUsage(readDailyUsage())
 
     setBasicChat([])
     setBasicFollowUp('')
@@ -380,6 +461,10 @@ export function Home() {
     // "심리테스트" 느낌으로 스텝 변경 시 상단으로 이동
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [step])
+
+  useEffect(() => {
+    setDailyUsage(readDailyUsage())
+  }, [])
 
   const loadingLines = useMemo(() => {
     const base = [
@@ -575,6 +660,17 @@ export function Home() {
               description="구체적으로 적을수록 답변이 좋아집니다. (예시를 참고해도 좋아요)"
             >
               <div className="grid gap-3">
+                <div className="rounded-xl border bg-white/60 px-4 py-3 text-xs text-neutral-600 backdrop-blur">
+                  오늘 남은 무료 상담:{' '}
+                  <span className="font-semibold text-neutral-900">
+                    {Math.max(DAILY_LIMITS.basic - dailyUsage.basic, 0)}회
+                  </span>
+                  {' · '}심층 상담:{' '}
+                  <span className="font-semibold text-neutral-900">
+                    {Math.max(DAILY_LIMITS.deep - dailyUsage.deep, 0)}회
+                  </span>
+                </div>
+
                 <div className="rounded-xl border bg-neutral-50 p-4 text-sm text-neutral-700">
                   <p className="font-semibold text-neutral-900">예시</p>
                   <p className="mt-2">
@@ -605,7 +701,7 @@ export function Home() {
                   <button
                     type="button"
                     className="rounded-xl bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(79,70,229,0.8)] disabled:opacity-50"
-                    disabled={!message.trim()}
+                    disabled={!message.trim() || dailyUsage.basic >= DAILY_LIMITS.basic}
                     onClick={() => void runBasicCounsel()}
                   >
                     1차 상담 시작
@@ -664,6 +760,13 @@ export function Home() {
             >
               <div className="grid gap-4">
                 <ResultShareCard topic={topic} tone={tone} />
+
+                <div className="rounded-xl border bg-white/60 px-4 py-3 text-xs text-neutral-600 backdrop-blur">
+                  오늘 남은 심층 상담:{' '}
+                  <span className="font-semibold text-neutral-900">
+                    {Math.max(DAILY_LIMITS.deep - dailyUsage.deep, 0)}회
+                  </span>
+                </div>
 
                 <div className="rounded-2xl border bg-neutral-50 p-5">
                   <p className="text-xs font-semibold text-neutral-600">상담 내용(상세)</p>
@@ -769,7 +872,8 @@ export function Home() {
                   </button>
                   <button
                     type="button"
-                    className="rounded-xl bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(79,70,229,0.8)]"
+                    className="rounded-xl bg-gradient-to-r from-indigo-600 via-fuchsia-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_18px_50px_-28px_rgba(79,70,229,0.8)] disabled:opacity-50"
+                    disabled={dailyUsage.deep >= DAILY_LIMITS.deep}
                     onClick={() => void runDeepCounsel()}
                   >
                     더 상담하고 싶어요 (심층 상담)
